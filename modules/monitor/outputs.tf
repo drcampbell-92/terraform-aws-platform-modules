@@ -22,3 +22,8 @@ output "schedule_name" {
   description = "Name of the EventBridge schedule"
   value       = aws_scheduler_schedule.checker.name
 }
+
+output "role_arn" {
+  description = "ARN of the checker's execution role, for resource policies that grant it access"
+  value       = aws_iam_role.checker.arn
+}
