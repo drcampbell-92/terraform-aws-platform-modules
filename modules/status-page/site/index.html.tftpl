@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${title}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; color: #222; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
+    .up { color: #1a7f37; font-weight: 600; }
+    .down { color: #cf222e; font-weight: 600; }
+    #updated { color: #666; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <h1>${title}</h1>
+  <p id="updated">Loading...</p>
+  <table>
+    <thead>
+      <tr><th>Service</th><th>Status</th><th>Response time</th></tr>
+    </thead>
+    <tbody id="results"></tbody>
+  </table>
+  <script>
+    function cell(text, className) {
+      var td = document.createElement("td");
+      td.textContent = text;
+      if (className) { td.className = className; }
+      return td;
+    }
+
+    function render(data) {
+      var body = document.getElementById("results");
+      body.replaceChildren();
+      data.results.forEach(function (result) {
+        var row = document.createElement("tr");
+        row.appendChild(cell(result.name));
+        row.appendChild(cell(result.ok ? "Up" : "Down (" + result.status + ")", result.ok ? "up" : "down"));
+        row.appendChild(cell(result.latency_ms + " ms"));
+        body.appendChild(row);
+      });
+      document.getElementById("updated").textContent = "Last checked: " + new Date(data.checked_at).toLocaleString();
+    }
+
+    function load() {
+      fetch("status.json", { cache: "no-store" })
+        .then(function (response) {
+          if (!response.ok) { throw new Error("No status yet"); }
+          return response.json();
+        })
+        .then(render)
+        .catch(function () {
+          document.getElementById("updated").textContent = "No status available yet. The first check runs within a few minutes.";
+        });
+    }
+
+    load();
+    setInterval(load, 60000);
+  </script>
+</body>
+</html>
