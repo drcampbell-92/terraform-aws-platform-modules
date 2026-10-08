@@ -14,3 +14,9 @@ First release.
 - `guardrails`: workload permissions boundary and a monthly budget filtered by environment.
 - Tests for every module using `terraform test` with mock providers.
 - Pipeline running formatting, validation, and tests on pull requests.
+
+## v1.0.1
+
+### Fixed
+
+- `alerts`: the topic policy's deny statement used a misspelled condition key, `aws:PrinipalArn`. AWS treated the unknown key as absent, so the deny applied to every principal, including the listed publishers, and alerts could not be sent. The key is now `aws:PrincipalArn`, and a test asserts the exact key.

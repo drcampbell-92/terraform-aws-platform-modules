@@ -37,7 +37,7 @@ resource "aws_sns_topic_policy" "alerts" {
         Action    = "sns:Publish"
         Resource  = aws_sns_topic.alerts.arn
         Condition = {
-          ArnNotEquals = { "aws:PrinipalArn" = var.allowed_publisher_arns }
+          ArnNotEquals = { "aws:PrincipalArn" = var.allowed_publisher_arns }
         }
       },
     ]

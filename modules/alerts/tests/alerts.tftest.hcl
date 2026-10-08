@@ -68,6 +68,11 @@ run "denies_unlisted_publishers" {
     condition     = strcontains(aws_sns_topic_policy.alerts.policy, "uptime-test-checker-role")
     error_message = "The listed publisher must appear in the topic policy."
   }
+
+  assert {
+    condition     = strcontains(aws_sns_topic_policy.alerts.policy, "\"aws:PrincipalArn\"")
+    error_message = "The deny statement must use the aws:PrincipalArn condition key, spelled exactly."
+  }
 }
 
 run "requires_a_publishers" {
