@@ -1,0 +1,41 @@
+name: module-tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [monitor, alerts, status-page, guardrails]
+    defaults:
+      run:
+        working-directory: modules/${{ matrix.module }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.12.2"
+
+      - name: Check formatting
+        run: terraform fmt -check -recursive
+
+      - name: Initialize
+        run: terraform init -input=false
+
+      - name: Validate
+        run: terraform validate
+
+      - name: Test
+        run: terraform test
